@@ -1,4 +1,4 @@
-// Compile with  g++-13 -std=c++0x -O3 -fopenmp -I../include -L../build -lDuoHash -o main main.cpp
+// Compile with  g++-13 -std=c++0x -O3 -fopenmp -I../include -L../build -o main main.cpp -lDuoHash
 
 #include <DuoHash.h>
 #include <chrono>

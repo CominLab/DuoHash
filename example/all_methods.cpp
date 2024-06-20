@@ -1,4 +1,4 @@
-// Compile with  g++-13 -std=c++0x -O3 -fopenmp -I../include -L../build -lDuoHash -o allMethods allMethods.cpp
+// Compile with  g++-13 -std=c++0x -O3 -fopenmp -I../include -L../build -o allMethods allMethods.cpp -lDuoHash
 
 #include <DuoHash.h>
 #include <chrono>

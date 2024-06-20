@@ -71,7 +71,7 @@
 				hashes.resize(this->sequences.size());
 
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
-					_hash_::GetHashes_naive(this->sequences[seq], this->spaced, hashes[seq]);
+					GetHashes_naive(this->sequences[seq], this->spaced, hashes[seq]);
 			}
 			inline void GetEncoding_naive(std::vector<Hash_V>& hashes, PostProcessingFunction postProcessing)
 			{
@@ -80,7 +80,7 @@
 
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
 				{
-					_hash_::GetHashes_naive(this->sequences[seq], this->spaced, hashes[seq]);
+					GetHashes_naive(this->sequences[seq], this->spaced, hashes[seq]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -91,7 +91,7 @@
 				hashes.resize(this->sequences.size());
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
-					_hash_::GetHashes_speedup_previous(this->sequences[seq], this->spaced, hashes[seq]);
+					GetHashes_speedup_previous(this->sequences[seq], this->spaced, hashes[seq]);
 			}
 			inline void GetEncoding_FSH(std::vector<Hash_V>& hashes, PostProcessingFunction postProcessing)
 			{
@@ -100,7 +100,7 @@
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
 				{
-					_hash_::GetHashes_speedup_previous(this->sequences[seq], this->spaced, hashes[seq]);
+					GetHashes_speedup_previous(this->sequences[seq], this->spaced, hashes[seq]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -111,7 +111,7 @@
 				hashes.resize(this->sequences.size());
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
-					_hash_::GetHashes_with_ISSH(this->sequences[seq], this->spaced, hashes[seq]);
+					GetHashes_with_ISSH(this->sequences[seq], this->spaced, hashes[seq]);
 			}
 			inline void GetEncoding_ISSH(std::vector<Hash_V>& hashes, PostProcessingFunction postProcessing)
 			{
@@ -120,7 +120,7 @@
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
 				{
-					_hash_::GetHashes_with_ISSH(this->sequences[seq], this->spaced, hashes[seq]);
+					GetHashes_with_ISSH(this->sequences[seq], this->spaced, hashes[seq]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -258,7 +258,7 @@
 				{
 					hashes[seq].resize(this->multi_spaced.size());
 					for(size_t ss = 0; ss < this->multi_spaced.size(); ss++)
-						_hash_::GetHashes_naive(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
+						GetHashes_naive(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
 				}
 			}
 			inline void GetEncoding_naive(std::vector<Hash_V_V>& hashes, PostProcessingFunction postProcessing)
@@ -270,7 +270,7 @@
 				{
 					hashes[seq].resize(this->multi_spaced.size());
 					for(size_t ss = 0; ss < this->multi_spaced.size(); ss++)
-						_hash_::GetHashes_naive(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
+						GetHashes_naive(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -284,7 +284,7 @@
 				{
 					hashes[seq].resize(this->multi_spaced.size());
 					for(size_t ss = 0; ss < this->multi_spaced.size(); ss++)
-						_hash_::GetHashes_speedup_previous(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
+						GetHashes_speedup_previous(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
 				}
 			}
 			inline void GetEncoding_FSH(std::vector<Hash_V_V>& hashes, PostProcessingFunction postProcessing)
@@ -296,7 +296,7 @@
 				{
 					hashes[seq].resize(this->multi_spaced.size());
 					for(size_t ss = 0; ss < this->multi_spaced.size(); ss++)
-						_hash_::GetHashes_speedup_previous(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
+						GetHashes_speedup_previous(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -310,7 +310,7 @@
 				{
 					hashes[seq].resize(this->multi_spaced.size());
 					for(size_t ss = 0; ss < this->multi_spaced.size(); ss++)
-						_hash_::GetHashes_with_ISSH(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
+						GetHashes_with_ISSH(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
 				}
 			}
 			inline void GetEncoding_ISSH(std::vector<Hash_V_V>& hashes, PostProcessingFunction postProcessing)
@@ -322,7 +322,7 @@
 				{
 					hashes[seq].resize(this->multi_spaced.size());
 					for(size_t ss = 0; ss < this->multi_spaced.size(); ss++)
-						_hash_::GetHashes_with_ISSH(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
+						GetHashes_with_ISSH(this->sequences[seq], this->multi_spaced[ss], hashes[seq][ss]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -334,7 +334,7 @@
 				hashes.resize(this->sequences.size());
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
-					_hash_::GetHashes_speedup_multi_previous_Rotated(this->sequences[seq], this->spaced_qmers, hashes[seq]);
+					GetHashes_speedup_multi_previous_Rotated(this->sequences[seq], this->spaced_qmers, hashes[seq]);
 			}
 			inline void GetEncoding_FSH_multi(std::vector<Hash_V_V>& hashes, PostProcessingFunction postProcessing)
 			{
@@ -343,7 +343,7 @@
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
 				{
-					_hash_::GetHashes_speedup_multi_previous_Rotated(this->sequences[seq], this->spaced_qmers, hashes[seq]);
+					GetHashes_speedup_multi_previous_Rotated(this->sequences[seq], this->spaced_qmers, hashes[seq]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -354,7 +354,7 @@
 				hashes.resize(this->sequences.size());
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
-					_hash_::GetHashes_with_ISSH_multi_v1(this->sequences[seq], this->multi_spaced, this->VV_shifts, this->v_pos_one, this->max_transient_length, hashes[seq]);
+					GetHashes_with_ISSH_multi_v1(this->sequences[seq], this->multi_spaced, this->VV_shifts, this->v_pos_one, this->max_transient_length, hashes[seq]);
 			}
 			inline void GetEncoding_MISSH_v1(std::vector<Hash_V_V>& hashes, PostProcessingFunction postProcessing)
 			{
@@ -363,7 +363,7 @@
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
 				{
-					_hash_::GetHashes_with_ISSH_multi_v1(this->sequences[seq], this->multi_spaced, this->VV_shifts, this->v_pos_one, this->max_transient_length, hashes[seq]);
+					GetHashes_with_ISSH_multi_v1(this->sequences[seq], this->multi_spaced, this->VV_shifts, this->v_pos_one, this->max_transient_length, hashes[seq]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -374,7 +374,7 @@
 				hashes.resize(this->sequences.size());
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
-					_hash_::GetHashes_with_ISSH_multi_col(this->sequences[seq], this->infoCol, hashes[seq]);
+					GetHashes_with_ISSH_multi_col(this->sequences[seq], this->infoCol, hashes[seq]);
 			}
 			inline void GetEncoding_MISSH_col(std::vector<Hash_V_V>& hashes, PostProcessingFunction postProcessing)
 			{
@@ -383,7 +383,7 @@
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
 				{
-					_hash_::GetHashes_with_ISSH_multi_col(this->sequences[seq], this->infoCol, hashes[seq]);
+					GetHashes_with_ISSH_multi_col(this->sequences[seq], this->infoCol, hashes[seq]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -394,7 +394,7 @@
 				hashes.resize(this->sequences.size());
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
-					_hash_::GetHashes_with_ISSH_multi_col_parallel(this->sequences[seq], this->infoCol, hashes[seq]);
+					GetHashes_with_ISSH_multi_col_parallel(this->sequences[seq], this->infoCol, hashes[seq]);
 			}
 			inline void GetEncoding_MISSH_col_parallel(std::vector<Hash_V_V>& hashes, PostProcessingFunction postProcessing)
 			{
@@ -403,7 +403,7 @@
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
 				{
-					_hash_::GetHashes_with_ISSH_multi_col_parallel(this->sequences[seq], this->infoCol, hashes[seq]);
+					GetHashes_with_ISSH_multi_col_parallel(this->sequences[seq], this->infoCol, hashes[seq]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
@@ -414,7 +414,7 @@
 				hashes.resize(this->sequences.size());
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
-					_hash_::GetHashes_with_ISSH_multi_row(this->sequences[seq], this->infoRow, hashes[seq]);
+					GetHashes_with_ISSH_multi_row(this->sequences[seq], this->infoRow, hashes[seq]);
 			}
 			inline void GetEncoding_MISSH_row(std::vector<Hash_V_V>& hashes, PostProcessingFunction postProcessing)
 			{
@@ -423,7 +423,7 @@
 				
 				for (size_t seq = 0; seq < this->sequences.size(); seq++)
 				{
-					_hash_::GetHashes_with_ISSH_multi_row(this->sequences[seq], this->infoRow, hashes[seq]);
+					GetHashes_with_ISSH_multi_row(this->sequences[seq], this->infoRow, hashes[seq]);
 					postProcessing(hashes[seq], this->k);
 				}
 			}
