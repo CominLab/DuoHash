@@ -15,15 +15,27 @@
 
 	static const size_t kMER_MAX_LENGTH = 32;
 	
-	struct Hash
+	
+	typedef uint64_t Encoding;
+	typedef std::vector<Encoding> Encoding_V;
+	typedef std::vector<Encoding_V> Encoding_V_V;
+
+
+	struct Hashing
 	{
-		uint64_t encoding = 0;
 		uint64_t forward = 0;
 		uint64_t reverse = 0;
+	};
+	typedef std::vector<Hashing> Hashing_V;
+	typedef std::vector<Hashing_V> Hashing_V_V;
+
+
+	struct SpacedKmer
+	{
 		char spacedKmer[kMER_MAX_LENGTH + 1];
 	};
-	typedef std::vector<Hash> Hash_V;
-	typedef std::vector<Hash_V> Hash_V_V;
+	typedef std::vector<SpacedKmer> SpacedKmer_V;
+	typedef std::vector<SpacedKmer_V> SpacedKmer_V_V;
 
 
 
@@ -3170,9 +3182,9 @@
 	// +++++++++++++++++++++++++++++++++++++++++++
 	
 	// Per la gestione di un singolo hash
-	inline static void getHashes(Hash& hash, const size_t& k)
+	inline static void getHashes(Encoding& encoding, const size_t& k, Hashing& hash)
 	{
-		uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
+		uint8_t *my_encoding = reinterpret_cast<uint8_t*>(&encoding);
 		uint64_t& forward = hash.forward;
 		uint64_t& reverse = hash.reverse;
 
@@ -3180,7 +3192,7 @@
 		const size_t bytes = k >> 2; // 1
 		for (size_t i = 0; i < bytes; i++)
 		{
-			const size_t index = encoding[i] << 3; // 1
+			const size_t index = my_encoding[i] << 3; // 1
 			forward ^= e4_to_fHash[index + (bytes - i - 1)]; // 1 + 3
 			reverse ^= e4_to_rHash[index + i]; // 1 + 1
 		}
@@ -3191,7 +3203,7 @@
 		{
 			forward = rol(forward, remainder); // 4
 
-			const size_t index = encoding[bytes] << 3; // 1
+			const size_t index = my_encoding[bytes] << 3; // 1
 			switch (remainder)
 			{
 				case 3:
@@ -3219,19 +3231,22 @@
 	}
 
 	// Per la gestione di un vettore di hashes
-	inline static void getHashes(Hash_V& hashes, const size_t& k)
+	inline static void getHashes(Encoding_V& encodings, const size_t& k, Hashing_V& hashes)
 	{
 		const size_t bytes = k >> 2; // 1
 		const size_t remainder = k & 0b11; // 1
 
+		hashes.clear();
+		hashes.resize(encodings.size());
+
 		switch (remainder) // remainder può essere solo 0, 1, 2, o 3
 		{
 			case 3:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					uint64_t& forward = hash.forward;
-					uint64_t& reverse = hash.reverse;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					uint64_t& forward = hashes[j].forward;
+					uint64_t& reverse = hashes[j].reverse;
 
 					
 					for (size_t i = 0; i < bytes; i++)
@@ -3251,11 +3266,11 @@
 				break;
 			
 			case 2:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					uint64_t& forward = hash.forward;
-					uint64_t& reverse = hash.reverse;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					uint64_t& forward = hashes[j].forward;
+					uint64_t& reverse = hashes[j].reverse;
 
 					
 					for (size_t i = 0; i < bytes; i++)
@@ -3275,11 +3290,11 @@
 				break;
 			
 			case 1:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					uint64_t& forward = hash.forward;
-					uint64_t& reverse = hash.reverse;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					uint64_t& forward = hashes[j].forward;
+					uint64_t& reverse = hashes[j].reverse;
 
 					
 					for (size_t i = 0; i < bytes; i++)
@@ -3299,11 +3314,11 @@
 				break;
 			
 			default:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					uint64_t& forward = hash.forward;
-					uint64_t& reverse = hash.reverse;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					uint64_t& forward = hashes[j].forward;
+					uint64_t& reverse = hashes[j].reverse;
 
 					
 					for (size_t i = 0; i < bytes; i++)
@@ -3318,10 +3333,13 @@
 	}
 
 	// Per la gestione di un vettore di vettori di hashes
-	inline static void getHashes(Hash_V_V& hashes_v, const size_t& k)
+	inline static void getHashes(Encoding_V_V& encodings_v, const size_t& k, Hashing_V_V& hashes_v)
 	{
-		for (Hash_V& hashes : hashes_v)
-			getHashes(hashes, k);
+		hashes_v.clear();
+		hashes_v.resize(encodings_v.size());
+
+		for (size_t i = 0; i < encodings_v.size(); i++)
+			getHashes(encodings_v[i], k, hashes_v[i]);
 	}
 
 
@@ -3402,36 +3420,36 @@
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Per la gestione di un singolo hash
-	inline static void getSpacedKmers(Hash& hash, const size_t& k)
+	inline static void getSpacedKmers(Encoding& encoding, const size_t& k, SpacedKmer& spacedKmer)
 	{
-		uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-		char* spacedKmer = hash.spacedKmer;
+		uint8_t *my_encoding = reinterpret_cast<uint8_t*>(&encoding);
+		char* my_spacedKmer = spacedKmer.spacedKmer;
 
 		
 		const size_t bytes = k >> 2; // 1
 		for (size_t i = 0; i < bytes; i++)
 		{
-			uint32_t* temp = reinterpret_cast<uint32_t*>(spacedKmer + multiple_of_4[i]);
-			*temp = e4_to_char[encoding[i]];
+			uint32_t* temp = reinterpret_cast<uint32_t*>(my_spacedKmer + multiple_of_4[i]);
+			*temp = e4_to_char[my_encoding[i]];
 		}
 
 
 		const size_t remainder = k & 0b11; // 1
 		if (remainder)
 		{
-			uint32_t* temp = reinterpret_cast<uint32_t*>(spacedKmer + multiple_of_4[bytes]);
+			uint32_t* temp = reinterpret_cast<uint32_t*>(my_spacedKmer + multiple_of_4[bytes]);
 			switch (remainder)
 			{
 				case 3:
-					*temp = e3_to_char[encoding[bytes]];
+					*temp = e3_to_char[my_encoding[bytes]];
 					break;
 				
 				case 2:
-					*temp = e2_to_char[encoding[bytes]];
+					*temp = e2_to_char[my_encoding[bytes]];
 					break;
 				
 				case 1:
-					*temp = e1_to_char[encoding[bytes]];
+					*temp = e1_to_char[my_encoding[bytes]];
 					break;
 				
 				default:
@@ -3440,22 +3458,25 @@
 		}
 
 
-		spacedKmer[k] = '\0';
+		my_spacedKmer[k] = '\0';
 	}
 
 	// Per la gestione di un vettore di hashes
-	inline static void getSpacedKmers(Hash_V& hashes, const size_t& k)
+	inline static void getSpacedKmers(Encoding_V& encodings, const size_t& k, SpacedKmer_V& spacedKmers)
 	{
 		const size_t bytes = k >> 2;
 		const size_t remainder = k & 0b11;
 		
+		spacedKmers.clear();
+		spacedKmers.resize(encodings.size());
+
 		switch (remainder)
 		{
 			case 3:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					char* spacedKmer = hash.spacedKmer;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					char* spacedKmer = spacedKmers[j].spacedKmer;
 
 					for (size_t i = 0; i < bytes; i++)
 					{
@@ -3471,10 +3492,10 @@
 				break;
 			
 			case 2:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					char* spacedKmer = hash.spacedKmer;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					char* spacedKmer = spacedKmers[j].spacedKmer;
 
 					for (size_t i = 0; i < bytes; i++)
 					{
@@ -3490,10 +3511,10 @@
 				break;
 			
 			case 1:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					char* spacedKmer = hash.spacedKmer;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					char* spacedKmer = spacedKmers[j].spacedKmer;
 
 					for (size_t i = 0; i < bytes; i++)
 					{
@@ -3509,10 +3530,10 @@
 				break;
 			
 			default:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					char* spacedKmer = hash.spacedKmer;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					char* spacedKmer = spacedKmers[j].spacedKmer;
 
 					for (size_t i = 0; i < bytes; i++)
 					{
@@ -3527,10 +3548,13 @@
 	}
 
 	// Per la gestione di un vettore di vettori di hashes
-	inline static void getSpacedKmers(Hash_V_V& hashes_v, const size_t& k)
+	inline static void getSpacedKmers(Encoding_V_V& encodings_v, const size_t& k, SpacedKmer_V_V& spacedKmers_v)
 	{
-		for (Hash_V& hashes : hashes_v)
-			getSpacedKmers(hashes, k);
+		spacedKmers_v.clear();
+		spacedKmers_v.resize(encodings_v.size());
+
+		for (size_t i = 0; i < encodings_v.size(); i++)
+			getSpacedKmers(encodings_v[i], k, spacedKmers_v[i]);
 	}
 
 
@@ -3541,23 +3565,23 @@
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Per la gestione di un singolo hash
-	inline static void getBoth(Hash& hash, const size_t& k)
+	inline static void getBoth(Encoding& encoding, const size_t& k, Hashing& hash, SpacedKmer& spacedKmer)
 	{
-		uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
+		uint8_t *my_encoding = reinterpret_cast<uint8_t*>(&encoding);
 		uint64_t& forward = hash.forward;
 		uint64_t& reverse = hash.reverse;
-		char* spacedKmer = hash.spacedKmer;
+		char* my_spacedKmer = spacedKmer.spacedKmer;
 
 		
 		const size_t bytes = k >> 2; // 1
 		for (size_t i = 0; i < bytes; i++)
 		{
-			const size_t index = encoding[i] << 3; // 1
+			const size_t index = my_encoding[i] << 3; // 1
 			forward ^= e4_to_fHash[index + (bytes - i - 1)]; // 1 + 3
 			reverse ^= e4_to_rHash[index + i]; // 1 + 1
 			
-			uint32_t* temp = reinterpret_cast<uint32_t*>(spacedKmer + multiple_of_4[i]);
-			*temp = e4_to_char[encoding[i]];
+			uint32_t* temp = reinterpret_cast<uint32_t*>(my_spacedKmer + multiple_of_4[i]);
+			*temp = e4_to_char[my_encoding[i]];
 		}
 
 
@@ -3566,8 +3590,8 @@
 		{
 			forward = rol(forward, remainder); // 4
 
-			const size_t index = encoding[bytes] << 3; // 1
-			uint32_t* temp = reinterpret_cast<uint32_t*>(spacedKmer + multiple_of_4[bytes]);
+			const size_t index = my_encoding[bytes] << 3; // 1
+			uint32_t* temp = reinterpret_cast<uint32_t*>(my_spacedKmer + multiple_of_4[bytes]);
 
 			switch (remainder)
 			{
@@ -3575,7 +3599,7 @@
 					forward ^= e3_to_fHash[index]; // 1
 					reverse ^= e3_to_rHash[index + bytes]; // 1 + 1
 
-					*temp = e3_to_char[encoding[bytes]];
+					*temp = e3_to_char[my_encoding[bytes]];
 
 					break;
 				
@@ -3583,7 +3607,7 @@
 					forward ^= e2_to_fHash[index];
 					reverse ^= e2_to_rHash[index + bytes];
 
-					*temp = e2_to_char[encoding[bytes]];
+					*temp = e2_to_char[my_encoding[bytes]];
 					
 					break;
 				
@@ -3591,7 +3615,7 @@
 					forward ^= e1_to_fHash[index];
 					reverse ^= e1_to_rHash[index + bytes];
 
-					*temp = e1_to_char[encoding[bytes]];
+					*temp = e1_to_char[my_encoding[bytes]];
 					
 					break;
 				
@@ -3601,24 +3625,29 @@
 		}
 
 
-		spacedKmer[k] = '\0';
+		my_spacedKmer[k] = '\0';
 	}
 
 	// Per la gestione di un vettore di hashes
-	inline static void getBoth(Hash_V& hashes, const size_t& k)
+	inline static void getBoth(Encoding_V& encodings, const size_t& k, Hashing_V& hashes, SpacedKmer_V& spacedKmers)
 	{
 		const size_t bytes = k >> 2; // 1
 		const size_t remainder = k & 0b11; // 1
 		
+		hashes.clear();
+		hashes.resize(encodings.size());
+		spacedKmers.clear();
+		spacedKmers.resize(encodings.size());
+
 		switch (remainder)
 		{
 			case 3:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					uint64_t& forward = hash.forward;
-					uint64_t& reverse = hash.reverse;
-					char* spacedKmer = hash.spacedKmer;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					uint64_t& forward = hashes[j].forward;
+					uint64_t& reverse = hashes[j].reverse;
+					char* spacedKmer = spacedKmers[j].spacedKmer;
 
 					
 					for (size_t i = 0; i < bytes; i++)
@@ -3648,12 +3677,12 @@
 				break;
 			
 			case 2:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					uint64_t& forward = hash.forward;
-					uint64_t& reverse = hash.reverse;
-					char* spacedKmer = hash.spacedKmer;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					uint64_t& forward = hashes[j].forward;
+					uint64_t& reverse = hashes[j].reverse;
+					char* spacedKmer = spacedKmers[j].spacedKmer;
 
 					
 					for (size_t i = 0; i < bytes; i++)
@@ -3683,12 +3712,12 @@
 				break;
 			
 			case 1:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					uint64_t& forward = hash.forward;
-					uint64_t& reverse = hash.reverse;
-					char* spacedKmer = hash.spacedKmer;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					uint64_t& forward = hashes[j].forward;
+					uint64_t& reverse = hashes[j].reverse;
+					char* spacedKmer = spacedKmers[j].spacedKmer;
 
 					
 					for (size_t i = 0; i < bytes; i++)
@@ -3718,12 +3747,12 @@
 				break;
 			
 			default:
-				for (Hash& hash : hashes)
+				for (size_t j = 0; j < encodings.size(); j++)
 				{
-					uint8_t *encoding = reinterpret_cast<uint8_t*>(&hash.encoding);
-					uint64_t& forward = hash.forward;
-					uint64_t& reverse = hash.reverse;
-					char* spacedKmer = hash.spacedKmer;
+					uint8_t *encoding = reinterpret_cast<uint8_t*>(&encodings[j]);
+					uint64_t& forward = hashes[j].forward;
+					uint64_t& reverse = hashes[j].reverse;
+					char* spacedKmer = spacedKmers[j].spacedKmer;
 
 					
 					for (size_t i = 0; i < bytes; i++)
@@ -3743,10 +3772,15 @@
 	}
 
 	// Per la gestione di un vettore di vettori di hashes
-	inline static void getBoth(Hash_V_V& hashes_v, const size_t& k)
+	inline static void getBoth(Encoding_V_V& encodings_v, const size_t& k, Hashing_V_V& hashes_v, SpacedKmer_V_V& spacedKmers_v)
 	{
-		for (Hash_V& hashes : hashes_v)
-			getBoth(hashes, k);
+		hashes_v.clear();
+		hashes_v.resize(encodings_v.size());
+		spacedKmers_v.clear();
+		spacedKmers_v.resize(encodings_v.size());
+
+		for (size_t i = 0; i < encodings_v.size(); i++)
+			getBoth(encodings_v[i], k, hashes_v[i], spacedKmers_v[i]);
 	}
 	
 	

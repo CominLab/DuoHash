@@ -28,14 +28,16 @@ int main()
 
 	std::cerr << "\nTest with single seed\n";
 	DuoHash test(sequences, multi_spaced[0]);
-	std::vector<Hash_V> hashes;
+	std::vector<Encoding_V> encodings;
+	std::vector<Hashing_V> hashes;
+	std::vector<SpacedKmer_V> spacedKmers;
 
 	// GetEncoding_ISSH  /  get only forward & reverse hashing
 	{
 		std::cerr << "GetEncoding_ISSH... ";
 		
 		auto t1 = std::chrono::steady_clock::now();
-		test.GetEncoding_ISSH(hashes, getHashes);
+		test.GetEncoding_ISSH(encodings, hashes, spacedKmers);
 		auto t2 = std::chrono::steady_clock::now();
 		
 		auto t = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1);
@@ -47,7 +49,7 @@ int main()
 		std::cerr << "PrintFASTA... ";
 
 		auto t1 = std::chrono::steady_clock::now();
-		test.PrintFASTA(hashes, "single");
+		test.PrintFASTA(spacedKmers, "single");
 		auto t2 = std::chrono::steady_clock::now();
 
 		auto t = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1);
@@ -60,14 +62,16 @@ int main()
 
 	std::cerr << "\nTest with multiple seed\n";
 	DuoHash_multi test_multi(sequences, multi_spaced);
-	std::vector<Hash_V_V> hashes_multi;
+	std::vector<Encoding_V_V> encodings_multi;
+	std::vector<Hashing_V_V> hashes_multi;
+	std::vector<SpacedKmer_V_V> spacedKmers_multi;
 
 	// GetEncoding_MISSH_v1
 	{
 		std::cerr << "GetEncoding_MISSH_v1... ";
 
 		auto t1 = std::chrono::steady_clock::now();
-		test_multi.GetEncoding_MISSH_v1(hashes_multi, getBoth);
+		test_multi.GetEncoding_MISSH_v1(encodings_multi, hashes_multi, spacedKmers_multi);
 		auto t2 = std::chrono::steady_clock::now();
 		
 		auto t = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1);
@@ -79,7 +83,7 @@ int main()
 		std::cerr << "PrintFASTA... ";
 
 		auto t1 = std::chrono::steady_clock::now();
-		test_multi.PrintFASTA(hashes_multi, "multi");
+		test_multi.PrintFASTA(spacedKmers_multi, "multi");
 		auto t2 = std::chrono::steady_clock::now();
 
 		auto t = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1);
