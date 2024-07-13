@@ -30,3 +30,7 @@ Compile `example/main.cpp` file with
 $ cd example
 $ g++-13 -std=c++0x -O3 -fopenmp -I../include -L../build -lDuoHash -o main main.cpp
 ```
+
+
+## Thesis
+Link to my Master Thesis: [Gemin_Leonardo.pdf](https://thesis.unipd.it/retrieve/99e7ee7c-1348-45f6-8a02-467bae6b0dbc/Gemin_Leonardo.pdf)
