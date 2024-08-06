@@ -27,7 +27,7 @@ Make sure CMake is installed on the system.
 
 Download the repository using
 ```shell
-git clone https://github.com/leonardoGemin/DuoHash.git
+$ git clone https://github.com/leonardoGemin/DuoHash.git
 ```
 and build the library with 
 ```shell
