@@ -63,7 +63,7 @@ $ g++-13 -std=c++0x -O3 -fopenmp -I../include -L../build -lDuoHash -o main main.
 
 DuoHash: fast hashing of spaced seeds with application to spaced k-mers counting
 
-Leonardo Gemin1, Cinzia Pizzi1, and Matteo Comin
+Leonardo Gemin, Cinzia Pizzi, and Matteo Comin
 
 Accepted at ICCABS 2025
 
