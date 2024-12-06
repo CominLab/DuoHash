@@ -1,5 +1,4 @@
-# DuoHash: Improving Spaced k-mer Extraction and Hash Encoding for Bioinformatics Applications
-
+# DuoHash: fast hashing of spaced seeds with application to spaced k-mers counting
 
 ## Methods
 The **DuoHash** library provides two classes: **DuoHash** and **DuoHash_multi** for handling one or multiple spaced seeds, respectively. The methods of the first class are
