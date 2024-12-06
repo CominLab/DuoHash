@@ -1,5 +1,12 @@
 # DuoHash: fast hashing of spaced seeds with application to spaced k-mers counting
 
+
+
+## Summary
+
+Alignment-free genomic sequence analysis has facilitated high-throughput processing within numerous bioinformatics workflows. A central task in alignment-free applications is hashing $k$-mers, commonly used for indexing, querying, and fast similarity searches. Recently, spaced seeds—a specialized pattern designed to accommodate errors or mutations—have increasingly replaced $k$-mers, enhancing sensitivity in various applications. However, spaced seed hashing is computationally intensive, introducing significant delays.
+This paper addresses the challenge of efficient spaced seed hashing and presents DuoHash,  a framework that enables the efficient computation of several hash functions. Our experimental results demonstrate that the proposed method substantially outperforms existing algorithms, achieving speedups of up to 11x. To illustrate practical utility, we further applied DuoHash to the problem of spaced $k$-mers counting.
+
 ## Methods
 The **DuoHash** library provides two classes: **DuoHash** and **DuoHash_multi** for handling one or multiple spaced seeds, respectively. The methods of the first class are
 - `GetEncoding_naive()`,
